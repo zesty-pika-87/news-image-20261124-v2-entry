@@ -1149,18 +1149,18 @@ const INDEX: { n: number; region: string; headline: string }[] = [
 
 // Numbered pins for the 13 featured stories, in map-local coordinates.
 const PINS: Record<number, [number, number]> = {
-  1: [48, 26],
-  2: [196, 30],
+  1: [48, 32],
+  2: [188, 34],
   3: [222, 100],
-  4: [200, 26],
-  5: [216, 22],
-  6: [58, 28],
+  4: [206, 20],
+  5: [222, 28],
+  6: [62, 20],
   7: [148, 64],
   8: [172, 44],
   9: [140, 26],
   10: [70, 80],
   11: [168, 52],
-  12: [38, 40],
+  12: [30, 36],
   13: [70, 44],
 };
 
@@ -1222,13 +1222,16 @@ function main(): void {
 
   const cv = new Canvas(W, H);
   cv.fill(CREAM);
+  // Newsprint grain across the whole page: flat colour compresses too
+  // cleanly, and the paper needs tooth to read as a front page.
+  const rnd = mulberry32(20261124);
+  cv.grain(0, 0, W, H, rnd, 0.012);
   const MX = 28;
   const CW = W - MX * 2;
-  const rnd = mulberry32(20261124);
 
   // Masthead: the date, giant, serif-bold, full width.
   const mast = fitBlock('masthead', 'Tuesday 24 November 2026', CW, 1, 66, 66, true);
-  drawBlock(cv, MX, 10, mast.lines, mast.em, INK, { bold: true, align: 'center', lineH: 76 });
+  drawBlock(cv, MX + CW / 2, 10, mast.lines, mast.em, INK, { bold: true, align: 'center', lineH: 76 });
   const mastDeck = fitBlock(
     'masthead-deck',
     'Huang returns to Nvidia and Wall Street roars; a Russian jet rattles South Korea; COP31 ends with no deal.',
@@ -1237,7 +1240,7 @@ function main(): void {
     16,
     14,
   );
-  drawBlock(cv, MX, 88, mastDeck.lines, mastDeck.em, INK_SOFT, { align: 'center', lineH: 20 });
+  drawBlock(cv, MX + CW / 2, 88, mastDeck.lines, mastDeck.em, INK_SOFT, { align: 'center', lineH: 20 });
   hrule(cv, MX, 110, CW, 2);
 
   // Numbers band: six numbers, six different stories.
@@ -1321,7 +1324,7 @@ function main(): void {
     12,
     true,
   );
-  drawBlock(cv, MX, 986, check.lines, check.em, INK, { bold: true, align: 'center', lineH: 16 });
+  drawBlock(cv, MX + CW / 2, 986, check.lines, check.em, INK, { bold: true, align: 'center', lineH: 16 });
   drawText(cv, MX + CW / 2, 1006, 'Sources: Reuters · AAP · Greenpeace · MarketIndex · TBS', 10.5, INK_SOFT, { align: 'center' });
 
   const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
